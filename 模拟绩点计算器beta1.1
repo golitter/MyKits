@@ -1,0 +1,148 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <iomanip>
+// #include <ctime>
+/**
+    // 通过是指75及以上，
+ * @brief 陕科大 平均学分绩点计算公式
+ *      绩点系数：（成绩 - 50） / 10
+ * 
+ *      计算 = ∑课程学分*绩点系数 / ∑课程学分；
+ * 
+ *      该.cpp没有过多交互，还要纯手工输入，
+ */
+class Grade2021First { // 2021到2022年第一学期；2022年9月6日14点39分，beta版无所谓，哪个学期都行，继承的话还要改改；
+    friend class Grade;
+public:
+    Grade2021First() = default;
+    Grade2021First(std::string name, double grade, double credit): m_CourseName(name),m_CourseGrade(grade),m_CourseCredit(credit) {m_CourseNumber++;m_CourseRankNUmb = m_CourseNumber;}
+    void read() {
+        std::cout<<this->m_CourseName<<" : "<<this->m_CourseGrade<<"  "<<this->m_CourseCredit<<std::endl;
+    }
+private:
+    std::string m_CourseName; // 课程名字
+    double m_CourseGrade; // 课程得分 百分制
+    double m_CourseCredit; // 课程学分
+    int m_CourseRankNUmb; // 课程占位 : 好像可以用course.size()表示
+    static int m_CourseNumber; // 课程占位累加器
+};
+int Grade2021First::m_CourseNumber = 0;
+class Grade {
+public:
+    Grade& input(std::string name, double grade, double credit) {
+        m_gradeAbout2021First.push_back({name,grade,credit});
+        return *this;
+    }
+    // 答应绩点
+    void getGrade() const {
+        // <iomanip> 
+        std::cout<<std::setiosflags(std::ios_base::fixed)<<std::setprecision(2);
+        std::cout<<m_NowGrade<<std::endl;
+    }
+    // 计算绩点
+    Grade& calculateGrade() {
+        int couNum = m_gradeAbout2021First.size();
+        double couSum = 0;
+        double coiter = 0;
+        for(auto &course: m_gradeAbout2021First) {
+            if(course.m_CourseGrade < 60.0) {
+                std::cerr<<"有考试不及格，懒得给你算^_^"<<std::endl;
+                return *this;
+            } else {
+                double gradeU = (course.m_CourseGrade - 50.0) / 10.0;
+                coiter += gradeU*course.m_CourseCredit;
+                couSum += course.m_CourseCredit;
+            }
+        }
+        m_NowGrade = coiter / couSum;
+        return *this;
+    }
+    // 如果可以...
+    double change(std::string coursename, double addgrade) const {
+        // 
+    }    
+    // 也是如果可以...
+    double change(int courseNumb, double addgrade) const {
+        // 改变的分子 / 分母;
+        double courseDenom = 0;
+        for(auto &course: m_gradeAbout2021First) {
+            courseDenom += course.m_CourseCredit;
+        }
+        double addSum = 0;
+        for(auto &course: m_gradeAbout2021First) {
+            if(courseNumb == course.m_CourseRankNUmb) {
+                addSum = course.m_CourseCredit*(addgrade / 10.0)/ courseDenom;
+                return m_NowGrade+addSum;
+            }
+        }
+        std::cerr<<"没有找到该编号！！"<<std::endl;
+    }
+    // 也是 如果可以...
+    void change() {
+        // 没有如果...
+    }
+
+    // 打印全部课程信息； <iomanip>?? 对齐符没有用，过几天加上;
+    void print() const { // NOTICE: 使用了 <iomanip>
+        // std::cout<<"course"<<": "<<grade<<" "<<cedit<<"  "<<courserank<<std::endl;
+        std::cout<<std::setiosflags(std::ios_base::left);
+        std::cout<<std::setw(30)<<"课程名字"<<"| "<<std::setw(10)<<"课程分数"<<" "<<std::setw(10)<<"课程学分"<<"  "<<"课程编号"<<std::endl;        
+        for(auto &course: m_gradeAbout2021First) {
+            std::cout<<std::setw(30)<<course.m_CourseName<<"| "<<std::setw(10)<<course.m_CourseGrade<<" "<<std::setw(10)<<course.m_CourseCredit<<"  "<<course.m_CourseRankNUmb<<std::endl;
+        }
+        std::cout<<std::setprecision(2);
+        std::cout<<"绩点："<<m_NowGrade<<std::endl;
+        std::cout<<std::resetiosflags(std::ios_base::left);
+    }
+private:
+    std::vector<Grade2021First> m_gradeAbout2021First;
+    double m_NowGrade;
+    int m_NowCourseNumber;
+};
+// this is remnant;
+std::vector<std::string> vs_Course2021First;
+std::unordered_map<std::string, double> ums_Course2021FirstComp;
+// 对话类 代码量小，暂时用不上，（懒
+class PrintDialog {
+public:
+    PrintDialog() = default;
+    PrintDialog(std::string name): m_Name(name) {}
+    void m_welcome() const{
+        std::cout<<"欢迎进入"<<m_Name<<"系统 !"<<std::endl;
+    }
+private:
+    std::string m_Name;
+};
+// 以下仅为测试：
+void print2021FirstScore(Grade& mine) {
+    mine.input("社会实践I",75,0.5); // 两级制**spe
+    mine.input("体育I",80,1);
+    mine.input("生物技术与可持续发展",83,2);
+    mine.input("思想道德与法治",88,3);
+    mine.input("军事理论",74,2);
+    mine.input("计算机思维与人工智能基础",89,1.5);
+    mine.input("高等数学A1",100,6);
+    mine.input("线性代数",99,2);
+    mine.input("EAP1",78.28,9);
+    mine.input("大学生心理学",89,1);
+    mine.input("力学与生活",96,2);
+    mine.input("职业生涯规划及就业指导",96,0.5);
+}
+void test_My2021Beat1() {
+    // 2022年9月4日 11点45分 deta successful;
+    Grade mycs; print2021FirstScore(mycs);
+    // output: 3.72302; answer: 3.74
+    mycs.calculateGrade();  // 计算绩点
+    mycs.getGrade();mycs.print(); // 打印绩点和课程信息
+
+    std::cout<<mycs.change(3,15); // 如果...那么...
+}
+// void beta() { 模拟一下
+//     std::string couName("course1");
+// }
+int main()
+{
+    test_My2021Beat1();   
+}

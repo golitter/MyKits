@@ -1,0 +1,139 @@
+#include <iostream>
+#include <string>
+class Goods {
+public:
+    friend class GoodsInCart;
+    Goods() = default;
+    Goods(std::string goodName, int quaGood, int price, int capt);
+private:
+    class Goods * next;
+    std::string m_goodName = "";
+    int m_quantityGood = 0;
+    double m_priceGood = 0;
+    int m_cap = 0;
+};
+Goods::Goods(std::string goodName, int quaGood, int price, int capt) : next(nullptr), m_goodName(goodName), m_quantityGood(quaGood), m_priceGood(price), m_cap(capt) {}
+
+class GoodsInCart {
+public:
+    typedef Goods* GoodsNode;
+    // 构造函数
+    GoodsInCart() = default;
+    GoodsInCart(int capa):m_capacity(capa) {m_goodHead->next = NULL;}
+    // 变量封装
+    int getNowSumPrice() const;
+    int getUsedCap() const;
+    int getCapacity() const;
+    // 向购物车放入商品
+    void enterGoods(Goods& good);
+    // 去除购物车中的某个商品
+    void delGoods(std::string& goodName);
+    // 打印购物车内的信息
+    void printGoodInfo() const;
+    // 析构函数
+    ~GoodsInCart();
+private:
+    Goods* m_goodHead = new Goods;
+    double m_sumPrice = 0;
+    int m_nowCap = 0;
+    int m_capacity = 0;
+};
+int GoodsInCart::getNowSumPrice() const {
+    return m_sumPrice;
+}
+int GoodsInCart::getUsedCap() const {
+    return m_nowCap;
+}
+int GoodsInCart::getCapacity() const {
+    return m_capacity;
+}
+void GoodsInCart::enterGoods(Goods& good) {
+    m_sumPrice += good.m_priceGood * good.m_quantityGood;
+    m_nowCap += good.m_cap * good.m_quantityGood;
+    if(m_nowCap > m_capacity) {
+        std::cerr<<"Error!!!"
+            <<"  "<<
+                "Capacity is full"
+                    << std::endl;
+        return ;
+    } else {
+        GoodsNode temp = new Goods(good);
+        temp->next = m_goodHead->next;
+        m_goodHead->next = temp;
+    }
+}
+void GoodsInCart::delGoods(std::string& goodName) {
+    GoodsNode prev =m_goodHead, cur = m_goodHead->next;
+    while(cur != NULL) {
+        if(cur->m_goodName == goodName) {
+            prev->next = cur->next;
+            m_nowCap -= cur->m_cap * cur->m_quantityGood;
+            m_sumPrice -= cur->m_priceGood * cur->m_quantityGood;
+            delete cur;
+            // input: Yes sucuessfully delete
+            return ;
+        }
+        prev = prev->next;
+        cur = cur->next;
+    }
+    // input: No Not find this good, please input
+}
+void GoodsInCart::printGoodInfo() const {
+    GoodsNode cur = m_goodHead->next;
+    while(cur) {
+        std::cout<< "The commodity name: "
+            << cur->m_goodName <<"  number: "
+            << cur->m_quantityGood<<"  price: "
+            << cur->m_priceGood<<"  sumPrice: "
+            << cur->m_priceGood * cur->m_quantityGood<<
+            std::endl;
+            cur = cur->next;
+    }
+}
+GoodsInCart::~GoodsInCart() {
+    GoodsNode cur = m_goodHead->next, prev = m_goodHead;
+    while(cur) {
+        delete prev;
+        prev = cur;
+        cur = cur->next;
+    }
+    delete prev;
+}
+void test() {
+    // good(商品名称，该商品个数，单一该商品价格，单一该商品的容积)；
+    // input: good1 2 3 4
+    Goods good("good1",2,3,4);
+    // input good2 1 5 10
+    Goods ak("good2",1,5,10);
+    // 定义购物车容积 cart(C);
+    GoodsInCart cart(100);
+    // 向购物车内添加物品
+    cart.enterGoods(good);
+    // 向购物车内添加商品
+    cart.enterGoods(ak);
+    // 打印已经使用的容积
+    std::cout<<cart.getUsedCap()<<std::endl;
+    // 打印购物车内所有商品信息
+    cart.printGoodInfo();
+}
+void test1() {
+    Goods good1("good1",2,3,4);
+    Goods good2("good2",1,4,3);
+    Goods good3("good3",4,3,4);
+    Goods good4("good4",5,2,7);
+    GoodsInCart cart(100);
+    cart.enterGoods(good1), cart.enterGoods(good2);
+    cart.enterGoods(good3), cart.enterGoods(good4);
+    cart.printGoodInfo();
+    std::cout<<"-------------------"<<std::endl;
+    std::cout<<cart.getNowSumPrice()<<std::endl;
+    std::string str = "good3";
+    cart.delGoods(str);
+    std::cout<<"---------------------"<<std::endl;
+    cart.printGoodInfo();
+    std::cout<<"-----   "<<cart.getNowSumPrice()<<std::endl;
+}
+int main()
+{
+    test1();
+}
