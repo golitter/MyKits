@@ -1,0 +1,12 @@
+[
+{
+  "directory": "E:/aaMyCode/MyCCode/MyKits/json/build",
+  "command": "D:\\mingw8posix\\mingw64\\bin\\g++.exe  @CMakeFiles/main.dir/includes_CXX.rsp -g   -g -Wall -std=c++11 -o CMakeFiles\\main.dir\\src\\main.cpp.obj -c E:\\aaMyCode\\MyCCode\\MyKits\\json\\src\\main.cpp",
+  "file": "E:/aaMyCode/MyCCode/MyKits/json/src/main.cpp"
+},
+{
+  "directory": "E:/aaMyCode/MyCCode/MyKits/json/build",
+  "command": "D:\\mingw8posix\\mingw64\\bin\\g++.exe  @CMakeFiles/main.dir/includes_CXX.rsp -g   -g -Wall -std=c++11 -o CMakeFiles\\main.dir\\src\\myjson.cpp.obj -c E:\\aaMyCode\\MyCCode\\MyKits\\json\\src\\myjson.cpp",
+  "file": "E:/aaMyCode/MyCCode/MyKits/json/src/myjson.cpp"
+}
+]
