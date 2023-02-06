@@ -27,6 +27,7 @@ Json::Json(const string& value): m_type(json_string) {
 }
 
 Json::Json(Type type): m_type(type) {
+    // 用switch进行Json的默认类型初始化
     switch (m_type)
     {
     case json_null:
@@ -45,39 +46,49 @@ Json::Json(Type type): m_type(type) {
         m_value.m_stringaddress = new string("");
         break;
     case json_array:
+    // 初始化类型指针
         m_value.m_arrayaddress = new std::vector<Json>();
         break;
     case json_object:
+    // 同 初始化类型指针
         m_value.m_objectaddress = new std::map<string,Json>();
         break;
     default:
-        // error
+        // 其他为有错误
+
         break;
     }
 }
 Json::Json(const Json& other) {
+    // 用Json拷贝的函数
+    // 抽象出来的函数copy
     copy(other);
 }
 
     // 基本类型运算符重载
+
+/// @brief 向bool类型转换
 Json::operator bool() {
     if(m_type != json_bool) {
         throw new std::logic_error("type error, not bool value");
     }
     return m_value.m_bool;
 }
+/// @brief  向int类型转换
 Json::operator int() {
     if(m_type != json_int) {
         throw new std::logic_error("type error, not int value");
     }
     return m_value.m_int;
 }
+/// @brief 向double类型转换
 Json::operator double() {
     if(m_type != json_double) {
         throw new std::logic_error("type error, not double value");
     }
     return m_value.m_double;
 }
+/// @brief 向string类型转换
 Json::operator string() {
     if(m_type != json_string) {
         throw new std::logic_error("type error, not string value");
@@ -86,7 +97,11 @@ Json::operator string() {
 }
 
     // 重载中括号
-Json & Json::operator [] (int index ) {
+Json& Json::operator [] (int index ) {
+    /**
+     * 先判断是不是数组类型，
+     * 不是将类型设置为数组类型，并赋予初始化指针
+    */
     if(m_type != json_array) {
         m_type = json_array;
         m_value.m_arrayaddress = new std::vector<Json>();
@@ -94,7 +109,15 @@ Json & Json::operator [] (int index ) {
     if(index < 0) {
         throw new std::logic_error("error: array index < 0");
     }
+    /**
+     * index用size_t的话，会与后面 对象的中括号重载产生模糊。
+     * 因为数组下标 arr[index]在书写读入时，默认是int，因而于size_t不符合，且和其他重载不同而错误。
+     * https://blog.csdn.net/xinqjl/article/details/103108569/
+    */
     int length = (m_value.m_arrayaddress)->size();
+    /**
+     * 下标数字 大于 当前数组长度，将两者中间的元素添加且赋空。
+    */
     if(index >= length) {
         for(int i =  length; i <= index; ++i) {
             (m_value.m_arrayaddress)->push_back(Json());
@@ -102,7 +125,13 @@ Json & Json::operator [] (int index ) {
     }
     return ( (m_value.m_arrayaddress)->at(index) );
 }
+/// @brief 向数组类型添加Json元素。
+/// @param other Json元素
 void Json::append(const Json & other ) {
+    /**
+     * Json类型不是数组，先清除其他的内容，防止内存泄漏，
+     * 再赋予为数组类型
+    */
     if(m_type != json_array) {
         clear();
         m_type = json_array;
@@ -112,27 +141,40 @@ void Json::append(const Json & other ) {
 }
 
 
-Json & Json::operator [] (const char * key) {
+Json& Json::operator [] (const char * key) {
+    /**
+     * 将const char * 的字符串转为string字符串，并调用string字符串的函数
+    */
     string name(key);
     return ( *(this) )[name];
 }
-Json & Json::operator [] (const string & key) {
+Json& Json::operator [] (const string & key) {
     if(m_type != json_object) {
         clear();
         m_type = json_object;
+        // 对象的初始化指针
         m_value.m_objectaddress = new std::map<string, Json>();
     }
-    return ( *(m_value.m_objectaddress) )[key];
+    return ( *(m_value.m_objectaddress) )[key]; // 即 (map<>)[key]
 }
-    
+/// @brief Json的拷贝
+/// @param other Json数据
 void Json::operator = (const Json & other) {
+    // 先清除，再拷贝
     clear();
     copy(other);
 }
 
 
     // 以字符串形式返回
+
+/// @brief 将Json数据用字符串形式返回
+/// @return Json的字符串形式
 string Json::str() const {
+    /**
+     * stringstream ss
+     * 
+    */
     std::stringstream ss;
     switch (m_type)
     {
@@ -161,6 +203,7 @@ string Json::str() const {
             // for(auto it: (*m_value.m_arrayaddress)) { // * ","没法判断喽
             //     ss << it.str();
             // }
+            // 递归思想
             for(auto it = (m_value.m_arrayaddress)->begin(); it != (m_value.m_arrayaddress)->end(); ++it) {
                 if(it != (m_value.m_arrayaddress)->begin()) {
                     ss << ',';
@@ -173,6 +216,7 @@ string Json::str() const {
     case json_object:
         {
             ss << '{';
+            // 同理 递归思想
             for(auto it = (m_value.m_objectaddress)->begin(); it != (m_value.m_objectaddress)->end(); ++it) {
                 if(it != (m_value.m_objectaddress)->begin()) {
                     ss << ',';
@@ -183,12 +227,14 @@ string Json::str() const {
         }
         break;
     default:
+        // 错误
         break;
     }
 
     return ss.str();
 }
-
+/// @brief Json拷贝抽象出来的函数
+/// @param other 要拷贝的Json数据
 void Json::copy(const Json & other) {
      m_type = other.m_type;
 
@@ -223,7 +269,7 @@ void Json::copy(const Json & other) {
         break;
     }
 }
-
+/// @brief 清除不用的内存，防止内存泄漏
 void Json::clear() {
     switch (m_type)
     {
@@ -244,6 +290,9 @@ void Json::clear() {
             delete m_value.m_stringaddress;
         }
         break;
+        /**
+         * 由于数组和对象可能是嵌套的内容，即单独的Json类型，因此，对这两个数据类型的内部要单独delete。
+        */
     case json_array:
         {
             for(auto it = (m_value.m_arrayaddress)->begin(); it != (m_value.m_arrayaddress)->end(); ++it) {

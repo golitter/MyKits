@@ -6,11 +6,13 @@
 #include <string>
 #include <vector>
 #include <map>
+// 抛出logic_error的异常
 #include <stdexcept>
 #include <new>
 using std::string;
 
 // 可能跟其他的产生冲突，用命名空间进行隔离
+
 namespace golitter {
 namespace json{
 
@@ -28,14 +30,21 @@ public:
     };
 
     // 构造函数 
-    
+        /**
+         * 字符串有两个类型，一个是const char*的原c字符串类型，一个是cpp string类型。
+        */
+
     Json();
     Json(bool value);
     Json(int value);
     Json(double value);
     Json(const char* value);
     Json(const string& value);
+    /// @brief Json的空非类型默认构造
+    /// @param type 选择的类型
     Json(Type type);
+    /// @brief Json拷贝构造函数
+    /// @param other 
     Json(const Json& other);
 
     // 基本类型运算符重载
@@ -75,7 +84,6 @@ private:
         std::string* m_stringaddress;
         std::vector<Json> * m_arrayaddress;
         std::map<string,Json> * m_objectaddress;
-
     };
     Type m_type;
     Value m_value;

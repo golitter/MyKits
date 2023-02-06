@@ -35,9 +35,7 @@ void part_2() {
     obj["name"] = "golitter";
     obj["grade"] = 99;
     cout<<obj.str()<<endl;
-    /**
-     * 
-    */
+
 }
 int main()
 {
