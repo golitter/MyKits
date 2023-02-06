@@ -1,3 +1,0 @@
-D:\cmake\cmake\bin\cmake.exe -E rm -f CMakeFiles\myJSON.dir/objects.a
-D:\mingw8posix\mingw64\bin\ar.exe qc CMakeFiles\myJSON.dir/objects.a @CMakeFiles\myJSON.dir\objects1
-D:\mingw8posix\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\myJSON.dir/objects.a -Wl,--no-whole-archive -o myJSON.exe -Wl,--out-implib,libmyJSON.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\myJSON.dir\linkLibs.rsp
