@@ -70,14 +70,17 @@ Json Parser::parse() {
 
 Json Parser::parse_null() {
     if(m_str.compare(m_idx,4,"null") == 0) {
+        m_idx += 4;
          return Json{};
     }
     throw new std::logic_error("parse null error");
 }
 Json Parser::parse_bool() {
     if(m_str.compare(m_idx, 4, "true") == 0) {
+        m_idx += 4;
         return Json(true);
     } else if(m_str.compare(m_idx, 5, "false") == 0) {
+        m_idx += 5;
         return Json(false);
     } else {
         throw new std::logic_error("pasre bool error");
@@ -128,14 +131,113 @@ Json Parser::parse_number() {
     return Json(f);
 }
 string Parser::parse_string() {
-    return Json{};
+    string out;
+    while(true) {
+        /// @note: 用get_next_token()可能将字符串的空格省略了。
+        // char ch = get_next_token(); 
+        char ch = m_str[m_idx++];
+        if(ch == '"') {
+            break;
+        }
+        if(ch == '\\') {
+            /**
+             * 转义字符：
+             * https://www.json.org/json-en.html
+            */
+            ch = m_str[m_idx++];
+
+            switch (ch)
+            {
+            case '\n':
+                out += '\n';
+                break;
+            case '\r':
+                out += '\r';
+                break;
+            case '\t':
+                out += '\t';
+                break;
+            case '\b':
+                out += '\b';
+                break;
+            case '\f':
+                out += '\f';
+                break;
+            case '"':
+                out += "\\\"";
+                break;
+            case '\\':
+                out += "\\\\";
+                break;
+            case 'u':
+                out += "\\u";
+                {
+                    for(int i = 0; i < 4; ++i) {
+                        out += m_str[m_idx++];
+                    }
+                }
+                break;
+
+            default:
+                break;
+            }
+        } else {
+            out += ch;
+        }
+    }
+    return out;
 
 }
 Json Parser::parse_array() {
-    return Json{};
+    Json arr(Json::json_array);
+    char ch = get_next_token();
+    if(ch == ']') {
+        return arr;
+    }
+    m_idx--;
+    while(true) {
+        /// @note: skip_white_space()
+        arr.append(parse());
+        ch = get_next_token();
+        if(ch == ']') {
+            break;
+        }
+        if(ch != ',') {
+            throw new std::logic_error("parse array error");
+        }
+        m_idx++;
+    }
+    return arr;
 
 }
 Json Parser::parse_object() {
-    return Json{};
+    Json obj(Json::json_object);
+    char ch = get_next_token();
+    if(ch == '}') {
+        return obj;
+    }
+    m_idx--;
+    while(true) {
+        ch = get_next_token();
+        if(ch != '"') {
+            throw new std::logic_error("parse object error");
+        }
+        string key = parse_string();
+        ch = get_next_token();
+        if(ch != ':') {
+            throw new std::logic_error("parse object error");
+        }
+        obj[key] = parse();
+        ch = get_next_token();
+        if(ch == '}') {
+            break;
+        }
+        if(ch != ',') {
+            throw new std::logic_error("parse object error");
+        }
+        m_idx++;
+    }
+
+    return obj;
 
 }

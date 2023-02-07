@@ -1,5 +1,8 @@
 #include "../include/myjson.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
+
 using golitter::json::Json;
 void say_hello(){
     std::cout << "Hello, from myJSON!\n";
@@ -89,13 +92,45 @@ void parser_1() {
     v1.parse(str);
     cout<<v1.str()<<endl;
 }
+void parser_11() {
+    // 转义测试
+    string str = "\"hello world\"";
+    Json v;
+    v.parse(str);
+    using namespace std;
+    cout<<v.str()<<endl;
+    /// @attention: 一定要有空格
+    str = "[\"a\", 1, 2, 3, false, true, 1.23]";
+    v.parse(str);
+    cout<<v.str()<<endl;
+
+    Json obj;
+    str = "{\"a\": 1, \"b\": 2, \"c\": 3}";
+    v.parse(str);
+    cout<<v.str()<<endl;
+}
+void parser_111() {
+    using namespace std;
+    /**
+     * (用cmake时，读取文件失败)[https://blog.csdn.net/qq_41668266/article/details/105442375?ops_request_misc=&request_id=&biz_id=102&utm_term=cmakecpp%E8%AF%BB%E6%96%87%E4%BB%B6&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-105442375.142^v73^control,201^v4^add_ask,239^v1^insert_chatgpt&spm=1018.2226.3001.4187]
+    */
+    ifstream fin("./text/test.json");
+    stringstream ss;
+    ss<< fin.rdbuf();
+    string str = ss.str();
+    Json v;
+    v.parse(str);
+    cout<<str;
+
+    cout<<v.str()<<endl;
+}
 void test_number() {
     double a = -12345.233454;
     std::cout<<a<<std::endl;
 }
 int main()
 {
-    parser_1();
+    parser_111();
     // test_number();
     say_hello();
 }
