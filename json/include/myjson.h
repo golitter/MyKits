@@ -1,6 +1,9 @@
 /**
  * time: 2023年2月6日 20点32分
  * https://www.bilibili.com/video/BV1TP411p7cC/?p=2&spm_id_from=pageDriver&vd_source=13dfbe5ed2deada83969fafa995ccff6
+ * part1 part2
+ * 
+ * part3
 */
 #pragma once
 #include <string>
@@ -68,6 +71,10 @@ public:
     // 赋值运算符
     void operator = (const Json & other);
 
+    // 等号重载
+    bool operator == (const Json & other);
+    bool operator != (const Json & other);
+
     // 以字符串形式返回
     string str() const;
 
@@ -75,6 +82,49 @@ public:
     void copy(const Json & other);
     // 动态内存释放
     void clear();
+
+    // 数组迭代器
+    typedef std::vector<Json>::iterator iterator;
+
+    iterator begin() {
+        return (m_value.m_arrayaddress)->begin();
+    }
+    iterator end() {
+        return (m_value.m_arrayaddress)->end();
+    }
+
+    // 判断是否为空值
+    bool isNull() const {return m_type == json_null; }
+    // 判断是否为布尔值
+    bool isBool() const {return m_type == json_bool; }
+    // 判断是否为整型
+    bool isInt() const {return m_type == json_int; }
+    // 判断是否为浮点数型
+    bool isDouble() const {return m_type == json_double; }
+    // 判断是否为字符串型
+    bool isString() const {return m_type == json_string; }
+    // 判断是否为数组
+    bool isArray() const {return m_type == json_array; }
+    // 判断是否为对象
+    bool isObject() const {return m_type == json_object; }
+
+    // 显性转换
+
+    bool asBool() const;
+    int asInt() const;
+    double asDouble() const;
+    string asString() const;
+
+    // 数组有无某个索引
+    bool has(int index);
+    // 对象有无某个键
+    bool has(const char * key);
+    bool has(const string& key);
+
+    // 删除
+    void remove(int index);
+    void remove(const char* key);
+    void remove(const string& key);
 
 private:
     union Value {

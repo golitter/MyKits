@@ -37,9 +37,38 @@ void part_2() {
     cout<<obj.str()<<endl;
 
 }
+void part_3() {
+    Json arr;
+    arr[0] = true;
+    arr[1] = 1234;
+    arr[3] = "skldjf";
+
+    for(auto it = arr.begin(); it != arr.end(); ++it) {
+        std::cout<<it->str()<<std::endl;
+    }
+    puts("");
+    using namespace std;
+    cout<<arr.has(0)<<endl;
+    cout<<arr.has(34)<<endl;
+    arr.remove(0);
+    cout<<arr.str()<<endl;
+
+    Json obj;
+    obj["school"] = "sust";
+    obj["name"] = "golitter";
+    obj["age"] = 20;
+    obj["wait"] = arr;
+    cout<<obj.str();
+    obj.remove("school");
+    cout<<obj.str();
+    obj.remove("wait");
+    cout<<obj.str();
+    // debug£ºÇ³¿½±´´øÀ´µÄÎ£º¦
+        // cout<<arr.str();
+}
 int main()
 {
-    part_2();
+    part_3();
 
     say_hello();
 }
