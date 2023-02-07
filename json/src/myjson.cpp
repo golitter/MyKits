@@ -1,4 +1,5 @@
 #include "../include/myjson.h"
+#include "../include/myparser.h"
 #include <sstream>
 
 using namespace golitter::json;
@@ -110,6 +111,7 @@ Json& Json::operator [] (int index ) {
         throw new std::logic_error("error: array index < 0");
     }
     /**
+     * @attention:
      * index用size_t的话，会与后面 对象的中括号重载产生模糊。
      * 因为数组下标 arr[index]在书写读入时，默认是int，因而于size_t不符合，且和其他重载不同而错误。
      * https://blog.csdn.net/xinqjl/article/details/103108569/
@@ -334,6 +336,7 @@ void Json::clear() {
         }
         break;
         /**
+         * @attention:
          * 由于数组和对象可能是嵌套的内容，即单独的Json类型，因此，对这两个数据类型的内部要单独delete。
         */
     case json_array:
@@ -420,7 +423,7 @@ void Json::remove(int index) {
     if(index < 0 || index >= length) { // 范围不对
         return ;
     }
-    // debug：内存泄漏
+    /// @bug：内存泄漏
     (m_value.m_arrayaddress)->at(index).clear();
     (m_value.m_arrayaddress)->erase( (m_value.m_arrayaddress)->begin() + index );
 
@@ -439,7 +442,14 @@ void Json::remove(const string& key) {
         return ;
     }
 
-    // debug：内存泄漏
+    /// @bug：内存泄漏
     ( *(m_value.m_objectaddress) )[key].clear();
     (m_value.m_objectaddress)->erase(key);
+}
+
+    // 定义parser
+void Json::parse(const string& str) {
+    Parser p;
+    p.load(str);
+    *this = p.parse();
 }

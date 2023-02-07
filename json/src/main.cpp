@@ -63,12 +63,39 @@ void part_3() {
     cout<<obj.str();
     obj.remove("wait");
     cout<<obj.str();
-    // debug£ºÇ³¿½±´´øÀ´µÄÎ£º¦
+    /// @bug: å†…å­˜æ³„æ¼ å¾…æ”¹
         // cout<<arr.str();
+}
+void parser_1() {
+    string str = "null";
+    Json v;
+    v.parse(str);
+    using namespace std;
+    cout<<v.str()<<endl;
+    
+    Json v1;
+    // str = "false";
+    str = "true";
+    v1.parse(str);
+    cout<<v1.str()<<endl;
+
+    str = "1234";
+    v1.parse(str);
+    cout<<v1.str()<<endl;
+    str = "-12345.233454";
+    v1.parse(str);
+    cout<<v1.str()<<endl;
+    str = "12345.769";
+    v1.parse(str);
+    cout<<v1.str()<<endl;
+}
+void test_number() {
+    double a = -12345.233454;
+    std::cout<<a<<std::endl;
 }
 int main()
 {
-    part_3();
-
+    parser_1();
+    // test_number();
     say_hello();
 }

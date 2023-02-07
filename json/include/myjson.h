@@ -1,6 +1,12 @@
 /**
+ * @author:golitter
+ * @email: golitter@qq.com
+ * 
  * time: 2023年2月6日 20点32分
  * https://www.bilibili.com/video/BV1TP411p7cC/?p=2&spm_id_from=pageDriver&vd_source=13dfbe5ed2deada83969fafa995ccff6
+ * 
+ * new delete 易导致内存泄漏 ： 用shared_ptr
+ * [](https://blog.csdn.net/bitcarmanlee/article/details/124847634)
  * part1 part2
  * 
  * part3
@@ -125,6 +131,9 @@ public:
     void remove(int index);
     void remove(const char* key);
     void remove(const string& key);
+
+    // 定义parser
+    void parse(const string& str);
 
 private:
     union Value {
