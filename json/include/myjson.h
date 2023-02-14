@@ -7,10 +7,15 @@
  * 
  * new delete 易导致内存泄漏 ： 用shared_ptr
  * [](https://blog.csdn.net/bitcarmanlee/article/details/124847634)
+ * 2023年2月14日 17点39分 
+ *      联合体内不能使用智能指针
+ *      https://blog.csdn.net/dbdxnuliba/article/details/90286748?ops_request_misc=&request_id=&biz_id=102&utm_term=%E5%9C%A8%E8%81%94%E5%90%88%E4%BD%93%E5%86%85%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-90286748.142%5Ev73%5Econtrol
+ *      联合体中就不能放智能指针了，因为智能指针是模板类，大小不是四个字节，不好估计其大小。
  * part1 part2
  * 
  * part3
 */
+
 #pragma once
 #include <string>
 #include <vector>
@@ -18,6 +23,10 @@
 // 抛出logic_error的异常
 #include <stdexcept>
 #include <new>
+#include <memory>
+
+
+using std::shared_ptr;
 using std::string;
 
 // 可能跟其他的产生冲突，用命名空间进行隔离
@@ -86,6 +95,11 @@ public:
 
     // 拷贝 -- 赋值
     void copy(const Json & other);
+    // 深拷贝：解决浅拷贝带来的问题
+    void copy_string(const string& str);
+    void copy_string(const char* str);
+    void copy_array(const Json& array);
+    void copy_object(const Json& object);
     // 动态内存释放
     void clear();
 
@@ -135,6 +149,7 @@ public:
     // 定义parser
     void parse(const string& str);
 
+    // 析构
 private:
     union Value {
         bool m_bool;
@@ -143,6 +158,13 @@ private:
         std::string* m_stringaddress;
         std::vector<Json> * m_arrayaddress;
         std::map<string,Json> * m_objectaddress;
+        // shared_ptr<string> m_stringaddress;
+        // shared_ptr<std::vector<Json>> m_arrayaddress;
+        // shared_ptr<std::map<string,Json>> m_objectaddress;
+        /**
+         * 结构体中，智能指针和普通指针可以并存；但是联合体中就不能放智能指针了，因为智能指针是模板类，大小不是四个字节，不好估计其大小。
+         * https://blog.csdn.net/dbdxnuliba/article/details/90286748?ops_request_misc=&request_id=&biz_id=102&utm_term=%E5%9C%A8%E8%81%94%E5%90%88%E4%BD%93%E5%86%85%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-90286748.142^v73^control,201^v4^add_ask,239^v1^insert_chatgpt&spm=1018.2226.3001.4187
+        */
     };
     Type m_type;
     Value m_value;

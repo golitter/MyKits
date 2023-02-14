@@ -60,14 +60,19 @@ void part_3() {
     obj["school"] = "sust";
     obj["name"] = "golitter";
     obj["age"] = 20;
+    // cout<<obj.str();
     obj["wait"] = arr;
-    cout<<obj.str();
+    cout<<obj.str()<<endl;
     obj.remove("school");
-    cout<<obj.str();
+    cout<<obj.str()<<endl;
     obj.remove("wait");
-    cout<<obj.str();
-    /// @bug: 内存泄漏 待改
-        // cout<<arr.str();
+    cout<<obj.str()<<endl;
+        cout<<arr.str()<<endl;
+    Json arr2 = arr;
+    cout<<arr2.str()<<endl;
+    arr2["4534"] = 4;
+    cout<<arr2.str()<<endl;
+    cout<<arr.str()<<endl;
 }
 void parser_1() {
     string str = "null";
@@ -112,7 +117,10 @@ void parser_11() {
 void parser_111() {
     using namespace std;
     /**
+     * 
      * (用cmake时，读取文件失败)[https://blog.csdn.net/qq_41668266/article/details/105442375?ops_request_misc=&request_id=&biz_id=102&utm_term=cmakecpp%E8%AF%BB%E6%96%87%E4%BB%B6&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-3-105442375.142^v73^control,201^v4^add_ask,239^v1^insert_chatgpt&spm=1018.2226.3001.4187]
+     * 
+     * (个人写的基于当前cmake的文件相对路径)[https://789ak.com/index.php/2023/02/07/cmake%e8%af%bb%e5%8f%96%e9%9d%9ec%e6%96%87%e4%bb%b6/]
     */
     ifstream fin("./text/test.json");
     stringstream ss;
@@ -124,13 +132,21 @@ void parser_111() {
 
     cout<<v.str()<<endl;
 }
+void test_cmake() {
+    using namespace std;
+    ifstream fin("./text/test.json");
+    cout << fin.rdbuf();;
+
+}
 void test_number() {
     double a = -12345.233454;
     std::cout<<a<<std::endl;
 }
 int main()
 {
-    parser_111();
+    // test_cmake();
+    // parser_111();
     // test_number();
+    part_3();
     say_hello();
 }

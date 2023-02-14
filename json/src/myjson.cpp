@@ -168,6 +168,7 @@ void Json::operator = (const Json & other) {
 }
 
     // 等号重载
+    /// 比较地址
 bool Json::operator == (const Json & other) {
     if(m_type != other.m_type) {
         return false;
@@ -192,7 +193,6 @@ bool Json::operator == (const Json & other) {
         break;
     case json_array:
         {
-            /// debug
             return m_value.m_arrayaddress == other.m_value.m_arrayaddress;
         }
         break;
@@ -281,6 +281,9 @@ string Json::str() const {
 /// @brief Json拷贝抽象出来的函数
 /// @param other 要拷贝的Json数据
 void Json::copy(const Json & other) {
+        /**
+         * @resolved: 在 m_type = other.m_type 这步没有为数组、对象、字符串分配内存。
+        */
      m_type = other.m_type;
 
     switch (m_type)
@@ -299,19 +302,62 @@ void Json::copy(const Json & other) {
         break;
     case json_string:
         // 浅拷贝
-        m_value.m_stringaddress = other.m_value.m_stringaddress;
+        // m_value.m_stringaddress = other.m_value.m_stringaddress;
+        // 深拷贝
+        copy_string(*(other.m_value.m_stringaddress));
         break;
     case json_array:
         // 浅拷贝
-        m_value.m_arrayaddress = other.m_value.m_arrayaddress;
+        // m_value.m_arrayaddress = other.m_value.m_arrayaddress;
+        // 深拷贝
+        copy_array(other);
         break;
     case json_object:
         // 浅拷贝
-        m_value.m_objectaddress = other.m_value.m_objectaddress;
+        // m_value.m_objectaddress = other.m_value.m_objectaddress;
+        // 深拷贝
+        copy_object(other);
         break;
     default:
         // error
         break;
+    }
+}
+
+    // 深拷贝：解决浅拷贝带来的问题
+void Json::copy_string(const string& str) {
+    m_value.m_stringaddress = new string(str);
+}
+void Json::copy_string(const char* str) {
+    string tmp(str);
+    copy_string(tmp);
+}
+void Json::copy_array(const Json& array) {
+
+
+    /**
+     * 2023年2月13日 23点37分 
+     * @resolved: 数组类型为空，未分配内存。
+    */
+   m_value.m_arrayaddress = new std::vector<Json>();
+   /**
+    * @resolved: 修改类型后未分配内存。
+   */
+
+    for(auto it = (array.m_value.m_arrayaddress)->begin(); it != (array.m_value.m_arrayaddress)->end(); ++it) {
+        append(*it);
+        // (m_value.m_arrayaddress)->push_back(Json(*it));
+    }
+
+}
+void Json::copy_object(const Json& object) {
+
+    m_value.m_objectaddress = new std::map<string,Json>();
+
+    for(auto it = (object.m_value.m_objectaddress)->begin(); it != (object.m_value.m_objectaddress)->end(); ++it) {
+
+        ( *(m_value.m_objectaddress) )[string(it->first)] = it->second;
+
     }
 }
 /// @brief 清除不用的内存，防止内存泄漏
@@ -331,7 +377,6 @@ void Json::clear() {
         break;
     case json_string:
         {
-            // debug: 裸指针
             delete m_value.m_stringaddress;
         }
         break;
@@ -423,7 +468,6 @@ void Json::remove(int index) {
     if(index < 0 || index >= length) { // 范围不对
         return ;
     }
-    /// @bug：内存泄漏
     (m_value.m_arrayaddress)->at(index).clear();
     (m_value.m_arrayaddress)->erase( (m_value.m_arrayaddress)->begin() + index );
 
@@ -442,7 +486,6 @@ void Json::remove(const string& key) {
         return ;
     }
 
-    /// @bug：内存泄漏
     ( *(m_value.m_objectaddress) )[key].clear();
     (m_value.m_objectaddress)->erase(key);
 }
@@ -453,3 +496,4 @@ void Json::parse(const string& str) {
     p.load(str);
     *this = p.parse();
 }
+
