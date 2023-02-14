@@ -61,6 +61,7 @@ Json Parser::parse() {
         break;
     
     default:
+        assert( (0) && ("void Parser::parse() function has errors : default"));
         break;
     }
     
@@ -73,6 +74,7 @@ Json Parser::parse_null() {
         m_idx += 4;
          return Json{};
     }
+    assert( (m_str.compare(m_idx,4,"null") == 0) && ("parse null error"));
     throw new std::logic_error("parse null error");
 }
 Json Parser::parse_bool() {
@@ -83,7 +85,8 @@ Json Parser::parse_bool() {
         m_idx += 5;
         return Json(false);
     } else {
-        throw new std::logic_error("pasre bool error");
+        assert( (0) && ("parse bool error"));
+        throw new std::logic_error("parse bool error");
     }
 }
 Json Parser::parse_number() {
@@ -100,6 +103,7 @@ Json Parser::parse_number() {
         m_idx++;
     }
     if(m_str[m_idx] < '0' || m_str[m_idx] > '9') {
+        assert( (0) && ("parse number error"));
         throw new std::logic_error("parse number error");
     }
     while(m_str[m_idx] >= '0' && m_str[m_idx] <= '9') {
@@ -113,6 +117,7 @@ Json Parser::parse_number() {
 
     m_idx++;
     if(m_str[m_idx] < '0' || m_str[m_idx] > '9') {
+        assert( (0) && (parse number error));
         throw new std::logic_error("parse number error");
     }
     while(m_str[m_idx] >= '0' && m_str[m_idx] <= '9') {
@@ -179,6 +184,7 @@ string Parser::parse_string() {
                 break;
 
             default:
+                assert( (0) && ("string Parser::parse_string() function has errors : default"));
                 break;
             }
         } else {
@@ -203,6 +209,7 @@ Json Parser::parse_array() {
             break;
         }
         if(ch != ',') {
+            assert( (ch == ',') && ("parse array error"));
             throw new std::logic_error("parse array error");
         }
         m_idx++;
@@ -220,11 +227,13 @@ Json Parser::parse_object() {
     while(true) {
         ch = get_next_token();
         if(ch != '"') {
+            assert( (ch == '"') && ("parse object error"));
             throw new std::logic_error("parse object error");
         }
         string key = parse_string();
         ch = get_next_token();
         if(ch != ':') {
+            assert( (ch == ':') && ("parse object error"));
             throw new std::logic_error("parse object error");
         }
         obj[key] = parse();
@@ -233,6 +242,7 @@ Json Parser::parse_object() {
             break;
         }
         if(ch != ',') {
+            assert( (ch == ',') && ("parse object error"));
             throw new std::logic_error("parse object error");
         }
         m_idx++;

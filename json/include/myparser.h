@@ -1,8 +1,10 @@
 #pragma once
 #include "./myjson.h"
-// #include <iostream>
 #include <string>
 #include <stdexcept>
+
+#define NDEBUG
+#include <assert.h>
 using std::string;
 
 namespace golitter{

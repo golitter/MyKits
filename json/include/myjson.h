@@ -2,6 +2,8 @@
  * @author:golitter
  * @email: golitter@qq.com
  * 
+ * @website: https://789ak.com
+ * 
  * time: 2023年2月6日 20点32分
  * https://www.bilibili.com/video/BV1TP411p7cC/?p=2&spm_id_from=pageDriver&vd_source=13dfbe5ed2deada83969fafa995ccff6
  * 
@@ -11,9 +13,8 @@
  *      联合体内不能使用智能指针
  *      https://blog.csdn.net/dbdxnuliba/article/details/90286748?ops_request_misc=&request_id=&biz_id=102&utm_term=%E5%9C%A8%E8%81%94%E5%90%88%E4%BD%93%E5%86%85%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-90286748.142%5Ev73%5Econtrol
  *      联合体中就不能放智能指针了，因为智能指针是模板类，大小不是四个字节，不好估计其大小。
- * part1 part2
  * 
- * part3
+ * 
 */
 
 #pragma once
@@ -91,6 +92,9 @@ public:
     // 等号重载
     bool operator == (const Json & other);
     bool operator != (const Json & other);
+    bool compare(const Json& other);
+    bool compare_array(const Json& array);
+    bool compare_object(const Json& object);
 
     // 以字符串形式返回
     string str() const;

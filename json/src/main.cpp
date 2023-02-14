@@ -70,9 +70,20 @@ void part_3() {
         cout<<arr.str()<<endl;
     Json arr2 = arr;
     cout<<arr2.str()<<endl;
-    arr2["4534"] = 4;
+    // arr2["4534"] = 4;
     cout<<arr2.str()<<endl;
     cout<<arr.str()<<endl;
+    if(arr2 == arr) {
+        puts("==");
+    } else {
+        puts("!=");
+    }
+    
+    if(obj == arr) {
+        puts("==");
+    } else {
+        puts("!=");
+    }
 }
 void parser_1() {
     string str = "null";
@@ -96,6 +107,7 @@ void parser_1() {
     str = "12345.769";
     v1.parse(str);
     cout<<v1.str()<<endl;
+
 }
 void parser_11() {
     // 转义测试

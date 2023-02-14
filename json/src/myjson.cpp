@@ -175,6 +175,10 @@ void Json::operator = (const Json & other) {
     // 等号重载
     /// 比较地址
 bool Json::operator == (const Json & other) {
+    return compare(other);
+}
+bool Json::compare(const Json& other) {
+
     if(m_type != other.m_type) {
         return false;
     }
@@ -198,12 +202,14 @@ bool Json::operator == (const Json & other) {
         break;
     case json_array:
         {
-            return m_value.m_arrayaddress == other.m_value.m_arrayaddress;
+            // return m_value.m_arrayaddress == other.m_value.m_arrayaddress;
+            return compare_array(other);
         }
         break;
     case json_object:
         {
-            return m_value.m_objectaddress == other.m_value.m_objectaddress;
+            // return m_value.m_objectaddress == other.m_value.m_objectaddress;
+            return compare_object(other);
         }
         break;
     default:
@@ -211,6 +217,35 @@ bool Json::operator == (const Json & other) {
         break;
     }
     return false;
+}
+bool Json::compare_array(const Json& array) {
+    int other_length = (array.m_value.m_arrayaddress)->size();
+    int this_length = (m_value.m_arrayaddress)->size();
+    if(other_length != this_length) {
+        return false;
+    }
+
+    for(auto other_it = (array.m_value.m_arrayaddress)->begin(), this_it = (m_value.m_arrayaddress)->begin(); this_it != (m_value.m_arrayaddress)->end(); ++other_it, ++this_it) {
+        if(!this_it->compare(*other_it)) return false;
+    }
+    return true;
+
+}
+bool Json::compare_object(const Json& object) {
+    int other_length = (object.m_value.m_objectaddress)->size();
+    int this_length = (m_value.m_objectaddress)->size();
+    if(other_length != this_length) {
+        return false;
+    }
+    for(auto other_it = (object.m_value.m_objectaddress)->begin(), this_it = (m_value.m_objectaddress)->begin(); this_it != (m_value.m_objectaddress)->end();++other_it, ++this_it) {
+        if(other_it->first != this_it->first) {
+            return false;
+        }
+        if(! ((this_it->second).compare(other_it->second))) {
+            return false;
+        }
+    }
+    return true;
 }
 bool Json::operator != (const Json & other) {
     /// 调用等号的重载
