@@ -56,7 +56,7 @@ Json::Json(Type type): m_type(type) {
         break;
     default:
         // 其他为有错误
-
+        assert( 0 && ("Json::Json(Type type) function has error: default ... "));
         break;
     }
 }
@@ -71,6 +71,7 @@ Json::Json(const Json& other) {
 /// @brief 向bool类型转换
 Json::operator bool() {
     if(m_type != json_bool) {
+        assert( m_type == json_bool && ("type error, not bool value"));
         throw new std::logic_error("type error, not bool value");
     }
     return m_value.m_bool;
@@ -78,6 +79,7 @@ Json::operator bool() {
 /// @brief  向int类型转换
 Json::operator int() {
     if(m_type != json_int) {
+        assert( m_type == json_int && ("type error, not int value"));
         throw new std::logic_error("type error, not int value");
     }
     return m_value.m_int;
@@ -85,6 +87,7 @@ Json::operator int() {
 /// @brief 向double类型转换
 Json::operator double() {
     if(m_type != json_double) {
+        assert( m_type == json_double && ("type error, not double value"));
         throw new std::logic_error("type error, not double value");
     }
     return m_value.m_double;
@@ -92,6 +95,7 @@ Json::operator double() {
 /// @brief 向string类型转换
 Json::operator string() {
     if(m_type != json_string) {
+        assert(m_type == json_double && ("type error, not string value"));
         throw new std::logic_error("type error, not string value");
     }
     return *(m_value.m_stringaddress);
@@ -108,6 +112,7 @@ Json& Json::operator [] (int index ) {
         m_value.m_arrayaddress = new std::vector<Json>();
     }
     if(index < 0) {
+        assert( index >= 0 && ("error: array index < 0 "));
         throw new std::logic_error("error: array index < 0");
     }
     /**
@@ -202,6 +207,7 @@ bool Json::operator == (const Json & other) {
         }
         break;
     default:
+        assert( (0) && ("Json::operator==(const Json& other) function has errors : default"));
         break;
     }
     return false;
@@ -273,6 +279,7 @@ string Json::str() const {
         break;
     default:
         // 错误
+        assert( (0) && ("string Json::str() has errors : default"));
         break;
     }
 
@@ -320,6 +327,7 @@ void Json::copy(const Json & other) {
         break;
     default:
         // error
+        assert( (0) && ("void Json::copy(const Json& other) function has errors : default"));
         break;
     }
 }
@@ -401,6 +409,7 @@ void Json::clear() {
         }
         break;
     default:
+        assert( (0) && ("void Json::clear() function has errors : default"));
         break;
     }
     m_type = json_null;
@@ -410,24 +419,28 @@ void Json::clear() {
 
 bool Json::asBool() const {
     if(m_type != json_bool) {
+        assert( (m_type == json_bool) && "type error, not bool value");
         throw new std::logic_error("type error, not bool value");
     }
     return m_value.m_bool;
 }
 int Json::asInt() const {
     if(m_type != json_int) {
+        assert( (m_type == json_int) && ("type error, not int value"));
         throw new std::logic_error("type error, not int value");
     }
     return m_value.m_int;
 }
 double Json::asDouble() const {
     if(m_type != json_double) {
+        assert( (m_type == json_double) && ("type error, not double value"));
         throw new std::logic_error("type error, not double value");
     }
     return m_value.m_double;
 }
 string Json::asString() const {
     if(m_type != json_string) {
+        assert( (m_type == json_string) && ("type error, not string value"));
         throw new std::logic_error("type error, not string value");
     }
     return *(m_value.m_stringaddress);

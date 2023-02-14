@@ -25,6 +25,8 @@
 #include <new>
 #include <memory>
 
+#define NDEBUG
+#include <assert.h>
 
 using std::shared_ptr;
 using std::string;
