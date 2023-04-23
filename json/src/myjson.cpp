@@ -52,7 +52,7 @@ Json::Json(Type type): m_type(type) {
         break;
     case json_object:
     // 同 初始化类型指针
-        m_value.m_objectaddress = new std::map<string,Json>();
+        m_value.m_objectaddress = new std::unordered_map<string,Json>();
         break;
     default:
         // 其他为有错误
@@ -160,7 +160,7 @@ Json& Json::operator [] (const string & key) {
         clear();
         m_type = json_object;
         // 对象的初始化指针
-        m_value.m_objectaddress = new std::map<string, Json>();
+        m_value.m_objectaddress = new std::unordered_map<string, Json>();
     }
     return ( *(m_value.m_objectaddress) )[key]; // 即 (map<>)[key]
 }
@@ -395,7 +395,7 @@ void Json::copy_array(const Json& array) {
 }
 void Json::copy_object(const Json& object) {
 
-    m_value.m_objectaddress = new std::map<string,Json>();
+    m_value.m_objectaddress = new std::unordered_map<string,Json>();
 
     for(auto it = (object.m_value.m_objectaddress)->begin(); it != (object.m_value.m_objectaddress)->end(); ++it) {
 
