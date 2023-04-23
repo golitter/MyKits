@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <new>
 #include <memory>
+#include <unordered_map>
 
 #define NDEBUG
 #include <assert.h>
@@ -163,7 +164,7 @@ private:
         double m_double;
         std::string* m_stringaddress;
         std::vector<Json> * m_arrayaddress;
-        std::map<string,Json> * m_objectaddress;
+        std::unordered_map<string,Json> * m_objectaddress;
         // shared_ptr<string> m_stringaddress;
         // shared_ptr<std::vector<Json>> m_arrayaddress;
         // shared_ptr<std::map<string,Json>> m_objectaddress;
